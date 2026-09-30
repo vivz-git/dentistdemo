@@ -35,10 +35,10 @@ export function matchFaq(text: string, faqs: Faqs): Faqs[number] | undefined {
 
 export function detectTimePreference(text: string): TimePreference | undefined {
   const t = text.toLowerCase();
-  if (/\b(weekend|saturday|sunday|sat|sun)\b/.test(t)) return "weekend";
-  if (/\b(evening|after work|after (5|6|five|six)|late)\b/.test(t)) return "evening";
-  if (/\b(afternoon|lunch|after lunch|post lunch)\b/.test(t)) return "afternoon";
-  if (/\b(morning|early|before work|before (10|11|noon))\b/.test(t)) return "morning";
+  if (/\b(weekends?|saturdays?|sundays?|sat|sun)\b/.test(t)) return "weekend";
+  if (/\b(evenings?|after work|after (5|6|five|six)|late)\b/.test(t)) return "evening";
+  if (/\b(afternoons?|after lunch|post lunch)\b/.test(t)) return "afternoon";
+  if (/\b(mornings?|early|before work|before (10|11|noon))\b/.test(t)) return "morning";
   if (/\b(any ?time|anytime|whenever|flexible|any day|doesn'?t matter|no preference|soonest|earliest|as soon as possible)\b/.test(t)) return "any";
   return undefined;
 }
