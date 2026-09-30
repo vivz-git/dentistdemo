@@ -71,22 +71,25 @@ export default function LandingPage() {
 
       <main>
         {/* Hero */}
-        <section className="mx-auto grid max-w-[1240px] items-center gap-10 px-4 pb-16 pt-10 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14 lg:pb-24 lg:pt-16">
-          <div className="max-w-[560px]">
-            <h1 className="display text-[40px] font-semibold sm:text-[52px] xl:text-[58px]">Turn More Dental Enquiries Into Booked Consultations.</h1>
-            <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-ink-2 sm:text-[18px]">
-              Respond instantly, follow up automatically, and recover leads your front desk never got to.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href="/login" variant="signal" size="lg">
-                View Live Demo <ArrowRight weight="bold" className="size-4" />
-              </ButtonLink>
-              <ButtonLink href="#book" variant="secondary" size="lg">
-                Book a Demo
-              </ButtonLink>
+        <section className="mx-auto max-w-[1240px] px-4 pb-16 pt-10 sm:px-6 lg:pb-24 lg:pt-14">
+          <h1 className="display max-w-[20ch] text-[40px] font-semibold sm:text-[54px] lg:max-w-none lg:text-[60px] xl:text-[66px]">
+            Turn More Dental Enquiries
+            <br className="max-lg:hidden" /> Into Booked Consultations.
+          </h1>
+          <div className="mt-8 grid items-start gap-10 lg:mt-10 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-12">
+            <div className="max-w-[440px]">
+              <p className="text-[17px] leading-relaxed text-ink-2 sm:text-[18px]">Respond instantly, follow up automatically, and recover leads your front desk never got to.</p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <ButtonLink href="/login" variant="signal" size="lg">
+                  View Live Demo <ArrowRight weight="bold" className="size-4" />
+                </ButtonLink>
+                <ButtonLink href="#book" variant="secondary" size="lg">
+                  Book a Demo
+                </ButtonLink>
+              </div>
             </div>
+            <LiveBoard />
           </div>
-          <LiveBoard />
         </section>
 
         {/* Problem */}

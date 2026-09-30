@@ -86,5 +86,5 @@ export function matchSlotChoice(text: string, offered: SlotRef[], timeZone: stri
 export const BOOKING_INTENT = /\b(book|booking|appointment|appt|slot|available|availability|visit|come in|consult(ation)?|schedule|reserve|when can i)\b/i;
 export const PRICE_INTENT = /\b(price|cost|charges?|fees?|how much|rate|rates|expensive|cheap|emi|payment plan|₹|rs\.?)\b/i;
 export const AFFIRMATIVE = /^\s*(yes|yeah|yep|yup|sure|ok(ay)?|please|interested|i am interested|haan|ha|go ahead|sounds good|let'?s do it|definitely)\b/i;
-export const NOT_INTERESTED = /\b(not interested|no thanks|no thank you|already (booked|done|got it done|visited)|went (somewhere|elsewhere)|found another|not now|maybe later)\b/i;
+export const NOT_INTERESTED = /\b(not interested|no thanks|no thank you|already (booked|done|got it done|visited|got)|got it done|elsewhere|somewhere else|found another|not now|maybe later)\b/i;
 export const GREETING = /^\s*(hi|hello|hey|namaste|good (morning|afternoon|evening))\b[\s!.,]*$/i;

@@ -1,0 +1,21 @@
+{
+  "world": "status-board",
+  "mode": { "landing": "persuade", "app": "operate" },
+  "theme": "light",
+  "colorStrategy": "restrained",
+  "tokens": {
+    "bg": "#f3f4f1", "surface": "#ffffff", "surface2": "#eaece7", "surface3": "#e1e4de",
+    "line": "#d9dcd5", "lineStrong": "#c3c7bf",
+    "ink": "#14181f", "ink2": "#454c57", "ink3": "#636a74",
+    "board": "#14181f", "board2": "#1d232c", "boardLine": "#2c343f", "boardInk": "#eef1ec", "boardInk2": "#a7afba",
+    "signal": "#f5b72a", "signalStrong": "#e3a310", "signalWash": "#fdf1d3",
+    "series1": "#2f5aa8", "series2": "#d9901a"
+  },
+  "status": {
+    "new": "#3c4a5e", "contacted": "#2f5aa8", "qualified": "#6146a8", "booked": "#1d7348",
+    "attended": "#0d5534", "lost": "#5d636b", "needs_human": "#b13d0b", "do_not_contact": "#9b1b3a"
+  },
+  "type": { "family": "Archivo", "axes": ["wdth"], "displayStretch": "88%", "boardStretch": "78%" },
+  "radius": { "control": 6, "panel": 8, "board": 10, "chip": 4 },
+  "motion": { "signature": "split-flap status change", "durationMs": [150, 420], "easing": "cubic-bezier(0.16, 1, 0.3, 1)" }
+}

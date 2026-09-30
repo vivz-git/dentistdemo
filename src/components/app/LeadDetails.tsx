@@ -27,7 +27,7 @@ export function LeadDetails({ leadId }: { leadId: string }) {
   const store = useDemoStore.getState;
   const tz = data.clinic.timezone;
   const appt = data.appointments.find((a) => a.id === lead.appointmentId && a.status !== "cancelled");
-  const followUps = data.followUps.filter((f) => f.leadId === leadId).sort((a, b) => b.dueAt.localeCompare(a.dueAt));
+  const followUps = data.followUps.filter((f) => f.leadId === leadId).sort((a, b) => Number(b.status === "scheduled") - Number(a.status === "scheduled") || b.dueAt.localeCompare(a.dueAt));
   const guardrails = data.messages.filter((m) => m.conversationId === data.conversations.find((c) => c.leadId === leadId)?.id && m.meta?.guardrail);
   const [booking, setBooking] = useState(false);
 

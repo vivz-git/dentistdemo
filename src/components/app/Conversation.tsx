@@ -148,11 +148,11 @@ export function Conversation({ leadId }: { leadId: string }) {
               <div className="mb-2 flex flex-wrap items-center gap-1" role="tablist" aria-label="Reply as">
                 {(
                   [
-                    ["patient", "Reply as patient (demo)", ArrowBendUpLeft],
-                    ["staff", "Reply as staff", UserCircle],
-                    ["note", "Internal note", Note],
+                    ["patient", "Reply as patient (demo)", ArrowBendUpLeft, "Patient (demo)"],
+                    ["staff", "Reply as staff", UserCircle, "Staff"],
+                    ["note", "Internal note", Note, "Note"],
                   ] as const
-                ).map(([k, label, Icon]) => (
+                ).map(([k, label, Icon, short]) => (
                   <button
                     key={k}
                     role="tab"
@@ -160,7 +160,8 @@ export function Conversation({ leadId }: { leadId: string }) {
                     onClick={() => setMode(k)}
                     className={clsx("flex h-8 items-center gap-1.5 rounded-[6px] px-2.5 text-[12.5px]", mode === k ? "bg-ink font-semibold text-white" : "text-ink-2 hover:bg-surface-2")}
                   >
-                    <Icon className="size-3.5" /> {label}
+                    <Icon className="size-3.5" /> <span className="max-sm:hidden">{label}</span>
+                    <span className="sm:hidden">{short}</span>
                   </button>
                 ))}
               </div>

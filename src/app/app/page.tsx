@@ -129,7 +129,8 @@ export default function DashboardPage() {
                     <span className="min-w-0">
                       <span className="block truncate text-[14px] font-medium">{l.name}</span>
                       <span className="block truncate text-[12px] text-board-ink-2">
-                        {serviceName(data, l.serviceId)} · {SOURCE_LABEL[l.source]}
+                        <span className="md:hidden">{serviceName(data, l.serviceId)} · </span>
+                        {SOURCE_LABEL[l.source]}
                       </span>
                     </span>
                     <span className="truncate text-[13px] text-board-ink-2 max-md:hidden">{serviceName(data, l.serviceId)}</span>

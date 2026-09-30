@@ -18,7 +18,7 @@ import {
   X,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/Button";
-import { Logo } from "@/components/ui/Logo";
+import { Logo, LogoMark } from "@/components/ui/Logo";
 import { useDemoStore } from "@/lib/store/useDemoStore";
 
 const NAV = [
@@ -125,14 +125,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <List className="size-5" />
             </button>
             <span className="lg:hidden">
-              <Logo />
+              <LogoMark className="size-6" />
             </span>
             <span className="hidden items-center gap-2 rounded-[4px] bg-signal-wash px-2 py-1 text-[12px] font-semibold text-ink sm:inline-flex">
               <span className="size-1.5 rounded-[1px] bg-signal-strong" aria-hidden /> Demo Mode · synthetic data, no real messages sent
             </span>
             <div className="ml-auto flex items-center gap-2">
               <Button variant="signal" size="sm" onClick={simulate} disabled={!data}>
-                <Plus weight="bold" className="size-3.5" /> <span className="max-[380px]:hidden">Simulate</span> new enquiry
+                <Plus weight="bold" className="size-3.5" />
+                <span className="max-sm:hidden">Simulate new enquiry</span>
+                <span className="sm:hidden">New enquiry</span>
               </Button>
             </div>
           </header>
@@ -203,7 +205,7 @@ function Toaster() {
   const toasts = useDemoStore((s) => s.toasts);
   const dismiss = useDemoStore((s) => s.dismissToast);
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-50 grid w-[min(380px,calc(100vw-2rem))] gap-2" aria-live="polite">
+    <div className="pointer-events-none fixed right-4 top-[68px] z-50 grid w-[min(380px,calc(100vw-2rem))] gap-2" aria-live="polite">
       {toasts.map((t) => (
         <div
           key={t.id}

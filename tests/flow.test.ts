@@ -196,3 +196,29 @@ describe("reactivation", () => {
     expect(A.leadById(d, lost.id).status).toBe("qualified");
   });
 });
+
+describe("assistant replies", () => {
+  it("closes politely when the patient booked elsewhere", async () => {
+    const d = createDemoData(NOW);
+    const lead = A.createLead(d, { name: "Test Patient", phone: "1", source: "website", enquiry: "Whitening please" }, NOW);
+    await turn(d, lead.id, "new_lead", NOW);
+    A.addMessage(d, lead.id, { author: "patient", kind: "text", body: "Thanks, I got it done elsewhere." }, NOW);
+    const { reply } = await turn(d, lead.id, "reply", NOW);
+    expect(reply.intent).toBe("not_interested");
+    expect(A.leadById(d, lead.id).status).toBe("lost");
+  });
+
+  it("books when the patient taps an offered time label", async () => {
+    const d = createDemoData(NOW);
+    const lead = A.createLead(d, { name: "Test Patient", phone: "1", source: "website", enquiry: "Implants please" }, NOW);
+    await turn(d, lead.id, "new_lead", NOW);
+    A.addMessage(d, lead.id, { author: "patient", kind: "text", body: "Weekday mornings work best" }, NOW);
+    const { reply } = await turn(d, lead.id, "reply", NOW);
+    const offer = reply.actions.find((a) => a.type === "offer_slots");
+    const slot = offer?.type === "offer_slots" ? offer.slots[1] : undefined;
+    expect(slot).toBeDefined();
+    A.addMessage(d, lead.id, { author: "patient", kind: "text", body: slot!.label }, NOW);
+    const { result } = await turn(d, lead.id, "reply", NOW);
+    expect(result.booked?.start).toBe(slot!.start);
+  });
+});
