@@ -87,21 +87,24 @@ export function ChatBubble({ author, kind = "text", body, time, authorName, slot
         <p className="whitespace-pre-line">{listed ? listed.join("\n").trim() : body}</p>
         {slots && slots.length > 0 && (
           <div className="mt-2.5 grid gap-1.5">
-            {slots.map((s, i) => (
-              <button
-                key={s.start}
-                type="button"
-                disabled={!pickable}
-                onClick={() => onPickSlot?.(s)}
-                className={clsx(
-                  "flex items-center gap-2.5 rounded-[6px] border bg-surface px-3 py-2 text-left text-[13.5px] tabular transition-colors",
-                  pickable ? "border-line-strong hover:border-ink hover:bg-surface-2" : "cursor-default border-line",
-                )}
-              >
-                <span className="grid size-5 place-items-center rounded-[3px] bg-surface-3 text-[11px] font-semibold">{i + 1}</span>
-                {s.label}
-              </button>
-            ))}
+            {slots.map((s, i) => {
+              const inner = (
+                <>
+                  <span className="grid size-5 place-items-center rounded-[3px] bg-surface-3 text-[11px] font-semibold">{i + 1}</span>
+                  {s.label}
+                </>
+              );
+              const cls = "flex items-center gap-2.5 rounded-[6px] border bg-surface px-3 py-2 text-left text-[13.5px] tabular transition-colors";
+              return onPickSlot && pickable ? (
+                <button key={s.start} type="button" onClick={() => onPickSlot(s)} className={clsx(cls, "border-line-strong hover:border-ink hover:bg-surface-2")}>
+                  {inner}
+                </button>
+              ) : (
+                <div key={s.start} className={clsx(cls, "border-line")}>
+                  {inner}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

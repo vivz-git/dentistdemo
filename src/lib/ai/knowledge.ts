@@ -57,6 +57,9 @@ const WEEKDAY_WORDS: [RegExp, number][] = [
 export function matchSlotChoice(text: string, offered: SlotRef[], timeZone: string): SlotRef | undefined {
   if (offered.length === 0) return undefined;
   const t = text.toLowerCase().trim();
+  const flat = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+  const exact = offered.find((s) => flat(s.label) === flat(text));
+  if (exact) return exact;
   const ordinal: Record<string, number> = { first: 0, "1st": 0, second: 1, "2nd": 1, third: 2, "3rd": 2, fourth: 3, "4th": 3, last: offered.length - 1 };
   const num = t.match(/^(?:option\s*)?#?(\d)\s*[.!]?$/) ?? t.match(/\boption\s*#?(\d)\b/);
   if (num) return offered[Number(num[1]) - 1];

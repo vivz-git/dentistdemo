@@ -39,6 +39,7 @@ interface DemoState {
   bookSlot: (leadId: string, slot: SlotRef, by: "ai" | "staff") => A.BookingOutcome;
   setLeadStatus: (leadId: string, status: LeadStatus) => void;
   assignLead: (leadId: string, staffId: string) => void;
+  setLeadService: (leadId: string, serviceId: string) => void;
   markRead: (leadId: string) => void;
   markAttended: (appointmentId: string, attended: boolean) => void;
 
@@ -210,6 +211,11 @@ export const useDemoStore = create<DemoState>()(
         assignLead: (leadId, staffId) =>
           mutate(get, set, (d) => {
             A.leadById(d, leadId).assignedToId = staffId;
+          }),
+
+        setLeadService: (leadId, serviceId) =>
+          mutate(get, set, (d) => {
+            A.leadById(d, leadId).serviceId = serviceId;
           }),
 
         markRead: (leadId) => {

@@ -49,7 +49,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.clearTimeout(t);
   }, []);
 
-  useEffect(() => setMenuOpen(false), [pathname]);
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
+    setMenuOpen(false);
+  }
 
   const needsHuman = data?.leads.filter((l) => l.status === "needs_human").length ?? 0;
   const newCount = data?.leads.filter((l) => l.status === "new").length ?? 0;

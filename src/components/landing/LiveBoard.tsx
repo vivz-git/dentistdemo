@@ -48,11 +48,8 @@ export function LiveBoard() {
   const [person, setPerson] = useState(0);
 
   useEffect(() => {
+    // With reduced motion the flap animation is disabled in CSS; the board just updates more slowly.
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setStep(LIVE_STEPS.length - 1);
-      return;
-    }
     const id = window.setInterval(() => {
       setStep((s) => {
         if (s >= LIVE_STEPS.length - 1) {
@@ -61,7 +58,7 @@ export function LiveBoard() {
         }
         return s + 1;
       });
-    }, 1900);
+    }, reduce ? 4000 : 1900);
     return () => window.clearInterval(id);
   }, []);
 
