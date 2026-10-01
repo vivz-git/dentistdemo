@@ -100,6 +100,15 @@ const MEDICAL_ADVICE = [
 
 const MONEY = /(?:₹|rs\.?|inr)\s?([\d,]+)/gi;
 
+/** Clock times in text as minutes after midnight: "5 pm" and "5:00\u00a0pm" are both 1020. */
+export function clockTimes(text: string): number[] {
+  return [...text.matchAll(/\b(\d{1,2})(?::(\d{2}))?\s?(am|pm)\b/gi)].map((m) => {
+    let h = Number(m[1]) % 12;
+    if (m[3].toLowerCase() === "pm") h += 12;
+    return h * 60 + Number(m[2] ?? 0);
+  });
+}
+
 export interface OutputCheck {
   ok: boolean;
   problems: string[];
@@ -119,6 +128,19 @@ export function checkOutput(reply: AssistantReply, ctx: AssistantContext): Outpu
     const n = Number(m[1].replace(/,/g, ""));
     if (!allowed.has(n)) problems.push(`Quoted an unconfigured price (${m[0]})`);
   }
+  const allowedTimes = new Set<number>();
+  for (const src of [ctx.clinic.hoursSummary, ctx.clinic.escalationInstructions, ...ctx.faqs.map((f) => f.answer), ...ctx.openSlots.map((s) => s.label)]) {
+    for (const t of clockTimes(src)) allowedTimes.add(t);
+  }
+  const listed = new Set(reply.actions.flatMap((a) => (a.type === "offer_slots" ? a.slots.map((s) => s.label) : [])));
+  const prose = reply.body
+    .split("\n")
+    .filter((line) => ![...listed].some((label) => line.includes(label)))
+    .join("\n");
+  for (const t of clockTimes(prose)) {
+    if (!allowedTimes.has(t)) problems.push(`Mentioned a time that is not open (${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")})`);
+  }
+
   const books = reply.actions.some((a) => a.type === "book_slot");
   if (!books && CONFIRMATION_CLAIM.test(reply.body)) problems.push("Claimed a confirmation that has not happened");
   if (MEDICAL_ADVICE.some((r) => r.test(reply.body))) problems.push("Gave diagnosis or treatment advice");

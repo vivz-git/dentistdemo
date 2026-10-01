@@ -17,6 +17,7 @@ import type {
   SlotRef,
 } from "@/lib/domain/types";
 import { DAY, formatSlotLabel, HOUR, MINUTE, parseHM, zonedParts, zonedTime } from "@/lib/time";
+import { withArticle } from "@/lib/text";
 import { DEMO_CLINIC_ID, demoClinic, demoFaqs, demoServices, demoStaff } from "./clinic";
 
 export const DEMO_DATA_VERSION = 4;
@@ -298,7 +299,7 @@ export function createDemoData(now: Date = new Date()): ClinicData {
     const svc = demoServices.find((s) => s.id === lead.serviceId);
     const opener = lead.source === "phone" ? `Hi ${first}, sorry we missed your call to SmileCare Dental Clinic.` : `Hi ${first}, thanks for your enquiry${svc ? ` about ${svc.name.toLowerCase()}` : ""} at SmileCare Dental Clinic.`;
     const next = svc
-      ? `The first step is a ${svc.consultationType.toLowerCase()}, where the dentist examines and explains your options in person. ${TIME_Q}`
+      ? `The first step is ${withArticle(svc.consultationType.toLowerCase())}, where the dentist examines and explains your options in person. ${TIME_Q}`
       : "Which treatment would you like to discuss? For example implants, aligners, braces, root canal treatment, whitening or a general check-up.";
     return `${opener} I'm the clinic's automated booking assistant and I can help you book a consultation or answer questions about timings, location and payments. ${next}`;
   };

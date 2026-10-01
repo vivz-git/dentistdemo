@@ -593,7 +593,7 @@ function Integrations() {
       .catch(() => setServer("unavailable (browser fallback)"));
   }, []);
   const rows = [
-    ["AI assistant", server === "checking" ? "Checking" : server, "Deterministic demo assistant by default. Set AI_PROVIDER=anthropic and ANTHROPIC_API_KEY on the server to use Claude. Guardrails run either way."],
+    ["AI assistant", server === "checking" ? "Checking" : server, "Deterministic demo assistant by default. Set AI_PROVIDER=groq and GROQ_API_KEY on the server to use gpt-oss-120b on Groq. Guardrails run either way."],
     ["WhatsApp", "Simulated", "WhatsApp Business Cloud API adapter planned. Needs a verified business number and approved templates."],
     ["SMS", "Simulated", "Needs a DLT-registered sender ID and templates for India."],
     ["Email", "Simulated", "Needs a verified sending domain."],

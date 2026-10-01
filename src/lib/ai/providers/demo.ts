@@ -11,6 +11,7 @@ import {
   PRICE_INTENT,
 } from "../knowledge";
 import { classifyInbound } from "../guardrails";
+import { withArticle } from "@/lib/text";
 import type { AIProvider, AssistantAction, AssistantContext, AssistantReply, Intent } from "../types";
 
 const TIME_QUESTION = "What time of day usually works for you: mornings, afternoons, evenings or weekends?";
@@ -64,7 +65,7 @@ export function respondDeterministically(ctx: AssistantContext): AssistantReply 
     if (detected && !svc) actions.push({ type: "set_service", serviceId: detected.id });
     const about = detected ? ` about ${detected.name.toLowerCase()}` : "";
     const next = detected
-      ? `The first step is a ${detected.consultationType.toLowerCase()}, where the dentist examines and explains your options in person. ${TIME_QUESTION}`
+      ? `The first step is ${withArticle(detected.consultationType.toLowerCase())}, where the dentist examines and explains your options in person. ${TIME_QUESTION}`
       : "Which treatment would you like to discuss? For example implants, aligners, braces, root canal treatment, whitening or a general check-up.";
     const opener =
       ctx.lead.source === "phone"
@@ -163,7 +164,7 @@ export function respondDeterministically(ctx: AssistantContext): AssistantReply 
 
   if (detected) {
     return {
-      body: `Thanks. The first step for ${detected.name.toLowerCase()} is a ${detected.consultationType.toLowerCase()}. ${TIME_QUESTION}`,
+      body: `Thanks. The first step for ${detected.name.toLowerCase()} is ${withArticle(detected.consultationType.toLowerCase())}. ${TIME_QUESTION}`,
       intent: "service_interest",
       actions,
       provider: "demo-rules",

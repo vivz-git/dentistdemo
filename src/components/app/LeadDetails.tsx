@@ -49,7 +49,7 @@ export function LeadDetails({ leadId }: { leadId: string }) {
           <dt className="text-ink-3">First reply</dt>
           <dd className="tabular">{formatDuration(lead.firstResponseSeconds)}</dd>
           <dt className="text-ink-3">Preferred time</dt>
-          <dd className="capitalize">{lead.intake.preferredTime ?? "Not yet asked"}</dd>
+          <dd className={lead.intake.preferredTime ? "capitalize" : "text-ink-3"}>{lead.intake.preferredTime ?? "Not yet asked"}</dd>
           {lead.intake.urgency && lead.intake.urgency !== "routine" && (
             <>
               <dt className="text-ink-3">Urgency</dt>

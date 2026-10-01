@@ -31,7 +31,7 @@ No API keys are needed. Optional settings live in `.env.example` (copy to `.env.
 | `npm start` | Serve the production build |
 | `npm run typecheck` | TypeScript, no emit |
 | `npm run lint` | ESLint (Next.js core-web-vitals + TypeScript rules) |
-| `npm test` | Vitest unit and workflow tests (14 tests) |
+| `npm test` | Vitest unit and workflow tests (23 tests; 2 live Groq tests run with `RUN_LIVE_GROQ=1`) |
 
 ## First three things to test
 
@@ -66,7 +66,7 @@ Also worth a look: **Clinic settings → Knowledge base → Test the assistant**
 - **No message is ever sent.** WhatsApp, SMS and email go through `SimulatedMessaging`.
 - **Patient replies** in the conversation view are typed or tapped by you (*Reply as patient (demo)*). Reactivation replies are scripted.
 - **The diary**: existing patients are represented by synthetic busy blocks rather than a real calendar or PMS.
-- **The assistant** is a deterministic rules engine unless you enable Claude (below). Both run through the same guardrails.
+- **The assistant** is a deterministic rules engine unless you enable Groq (below). Both run through the same guardrails.
 - **Authentication** is a one-click demo session with no password.
 
 ## Remaining production integrations
@@ -79,22 +79,38 @@ Also worth a look: **Clinic settings → Knowledge base → Test the assistant**
 | Calendar / practice-management system | Internal demo booking (`BookingProvider`) | PMS or calendar API adapter, two-way sync, conflict handling |
 | Database | Schema written (`supabase/migrations`) | Supabase project, server-side repository replacing the browser store, scheduled job to send due follow-ups |
 | Authentication | Demo cookie | Supabase Auth / Clerk / Auth.js with email OTP, roles enforced server-side |
-| LLM | Claude provider implemented, off by default | API key, prompt evaluation on real (consented) conversations |
+| LLM | Groq gpt-oss-120b provider implemented and tested live, off by default | Groq key (Dev tier for real volume), prompt evaluation on real (consented) conversations |
 | Lead capture | Simulated | Website form embed, Google Business / Instagram / directory lead webhooks, missed-call webhook from the clinic's telephony |
 | Demo request form | Logs server-side | CRM or email notification |
 
-## Enable the Claude assistant (optional)
+## Enable the Groq assistant (optional)
 
-The assistant runs server-side at `POST /api/assistant`. To use Claude instead of the rules engine:
+By default the assistant is a deterministic rules engine that needs no keys. To have **gpt-oss-120b on Groq** write the replies:
+
+1. Create a free API key at https://console.groq.com/keys.
+2. Add it to `.env.local` (or your host's server-side environment variables):
 
 ```bash
-# .env.local
-AI_PROVIDER=anthropic
-ANTHROPIC_API_KEY=sk-ant-...
-# optional: ANTHROPIC_MODEL=claude-opus-5-5
+AI_PROVIDER=groq
+GROQ_API_KEY=gsk_...
+# optional: GROQ_MODEL=openai/gpt-oss-120b
 ```
 
-`src/lib/ai/providers/anthropic.ts` builds a system prompt only from clinic configuration (details, hours, services, configured fees, FAQs, escalation rules), asks for a structured JSON reply (intent, service, time preference, whether to offer slots, which offered slot was chosen, whether to escalate), and never lets the model write appointment times: slots are always attached by the booking engine. It enables server-side refusal fallbacks and prompt caching of the clinic prompt. If the model errors, times out, or its reply fails an output guardrail, the deterministic reply is used instead. The key never reaches the browser; `GET /api/assistant` reports which provider is active, and **Clinic settings → Integrations** shows it.
+3. Restart the server. **Clinic settings → Integrations** and `GET /api/assistant` show the active provider.
+
+How it works (`src/lib/ai/providers/groq.ts`):
+
+- The call runs only on the server (`POST /api/assistant`), so the key never reaches the browser.
+- The system prompt is built only from clinic configuration: details, hours, services, configured fees, FAQs and escalation rules.
+- Groq's strict JSON-schema mode guarantees the model returns a structured reply: the message, intent, service, time preference, whether to offer times, which offered time was picked, and whether to escalate.
+- The model never writes appointment times: real open slots are always attached by the booking engine, and bookings are made by our own code.
+- Before any model call, emergencies, clinical questions and opt-outs are handled by fixed replies. After it, a reply that quotes an unconfigured price, mentions a time that isn't open, claims an unconfirmed booking or gives medical advice is discarded.
+- If Groq errors or times out, or a reply fails those checks, the deterministic assistant answers instead, so the demo never breaks.
+- First contact always discloses that the patient is talking to an automated assistant.
+
+**Free-tier rate limit.** A free Groq key allows about 8,000 tokens per minute for gpt-oss-120b, which is roughly 4 assistant replies a minute. If you go faster, ConsultFlow waits up to 3 seconds once and then falls back to the deterministic assistant for that reply. For live sales demos with several people clicking at once, use Groq's paid Dev tier.
+
+Live tests against the real API (skipped by default): `RUN_LIVE_GROQ=1 npm test`.
 
 ---
 
@@ -126,7 +142,7 @@ tests/                       Vitest workflow tests
 
 **How a turn works.** The browser builds an `AssistantContext` (clinic knowledge, recent transcript, open slots, last offer) and posts it to `/api/assistant`. The server runs `runAssistant`: inbound guardrail → provider → output guardrail. The reply comes back with *actions* (`offer_slots`, `book_slot`, `escalate`, `opt_out`, `set_service`, …) which `applyAssistantReply` in `src/lib/store/actions.ts` executes against the data. Those actions are pure functions over `ClinicData`, the same shape as the database tables, so moving them server-side against Postgres is a repository swap rather than a rewrite. If the API is unreachable the same pipeline runs in the browser with the deterministic provider.
 
-**Stack.** Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS 4, zustand, Phosphor icons, Anthropic TypeScript SDK (optional), Vitest.
+**Stack.** Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS 4, zustand, zod, Phosphor icons, Groq (optional, plain `fetch`, no SDK), Vitest.
 
 **Localisation.** Times are stored in UTC and rendered in the clinic's IANA timezone; currency, locale and phone formats live on the clinic record. Nothing in the booking or assistant logic assumes India, so AU / UK / US clinics are a configuration change plus copy review. International features are not built in V1.
 
@@ -137,7 +153,7 @@ tests/                       Vitest workflow tests
 1. Push the branch to GitHub (already done for `claude/consultflow-mvp`).
 2. In Vercel: **Add New → Project**, import `vivz-git/dentistdemo`, choose the branch (or merge to `main` first).
 3. Framework preset: **Next.js**. Build command `npm run build`, output left as default.
-4. Environment variables: none are required. Optionally add `AI_PROVIDER=anthropic` and `ANTHROPIC_API_KEY` (as a server-side variable, never `NEXT_PUBLIC_`).
+4. Environment variables: none are required. Optionally add `AI_PROVIDER=groq` and `GROQ_API_KEY` (as a server-side variable, never `NEXT_PUBLIC_`).
 5. Deploy. The landing page is at `/`, the demo at `/login`.
 
 ### Any Node host
@@ -152,7 +168,7 @@ Demo state is per browser, so the app scales horizontally with no shared storage
 
 ## Testing
 
-`npm test` runs the workflow tests in `tests/flow.test.ts`:
+`npm test` runs the workflow tests in `tests/flow.test.ts` and the Groq provider tests in `tests/groq.test.ts` (request shape, slot attachment, fallback on errors, 429 retry, rejection of invented prices and times, automated-assistant disclosure, clinical questions never sent to Groq):
 
 - the seed produces a realistic clinic (all eight statuses, funnel monotonic, no double bookings)
 - availability respects hours, breaks, notice and blackouts
