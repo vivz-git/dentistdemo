@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
           <Metric label="Booked" value={`${pct(f.booked, f.enquiries).toFixed(1)}%`} />
           <Metric label="Attended" value={`${pct(f.attended, f.enquiries).toFixed(1)}%`} />
           <Metric label="Lost" value={`${pct(lost, f.enquiries).toFixed(0)}%`} />
-          <Metric label="Reactivated" value={`${pct(reactivated.length, messaged).toFixed(0)}%`} hint="Replied positively ÷ messaged" />
+          <Metric label="Reactivated" value={`${pct(reactivated.length, messaged).toFixed(0)}%`} hint="Re-engaged ÷ messaged" />
           <Metric label="Recovered consultations" value={recovered} />
           <Metric label="Est. consultation value" value={inr(rev.consultationFees)} hint="Estimate" />
         </section>

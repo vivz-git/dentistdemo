@@ -281,7 +281,6 @@ export const useDemoStore = create<DemoState>()(
               mutate(get, set, (x) => {
                 A.addMessage(x, rec.leadId, { author: "patient", kind: "text", body: script.reply! }, new Date());
                 const lead = A.leadById(x, rec.leadId);
-                lead.reactivatedFromCampaignId = id;
                 const r = x.recipients.find((y) => y.id === rid)!;
                 r.status = "replied";
                 r.reply = script.reply;
@@ -304,6 +303,7 @@ export const useDemoStore = create<DemoState>()(
                   }
                 }
                 if (script.status === "interested") A.advance(x, lead, "qualified", new Date());
+                if (lead.status === "booked" || lead.status === "qualified") lead.reactivatedFromCampaignId = id;
                 r.status =
                   lead.status === "booked" ? "booked" : lead.status === "do_not_contact" ? "unsubscribed" : lead.status === "needs_human" ? "needs_human" : lead.status === "qualified" ? "interested" : "replied";
               });

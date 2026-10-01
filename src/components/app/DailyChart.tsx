@@ -9,7 +9,7 @@ import type { DailyPoint } from "@/lib/analytics/metrics";
  */
 export function DailyChart({ points }: { points: DailyPoint[] }) {
   const [hover, setHover] = useState<number | null>(null);
-  const W = 720;
+  const W = 560;
   const H = 220;
   const pad = { l: 28, r: 8, t: 10, b: 26 };
   const max = Math.max(2, ...points.map((p) => Math.max(p.enquiries, p.booked)));
@@ -35,7 +35,7 @@ export function DailyChart({ points }: { points: DailyPoint[] }) {
           {ticks.map((t) => (
             <g key={t}>
               <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="var(--line)" strokeWidth={1} />
-              <text x={pad.l - 6} y={y(t) + 4} textAnchor="end" fontSize={11} fill="var(--ink-3)" className="tabular">
+              <text x={pad.l - 6} y={y(t) + 4} textAnchor="end" fontSize={12} fill="var(--ink-3)" className="tabular">
                 {t}
               </text>
             </g>
@@ -52,7 +52,7 @@ export function DailyChart({ points }: { points: DailyPoint[] }) {
                   v > 0 ? <path key={j} d={colPath(x0 + j * (bw + 2), y(v), bw, y(0) - y(v))} fill={c} /> : null,
                 )}
                 {(i % 5 === 0 || i === points.length - 1) && (
-                  <text x={pad.l + i * band + band / 2} y={H - 8} textAnchor="middle" fontSize={11} fill="var(--ink-3)">
+                  <text x={pad.l + i * band + band / 2} y={H - 8} textAnchor="middle" fontSize={12} fill="var(--ink-3)">
                     {p.label}
                   </text>
                 )}

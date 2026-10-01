@@ -140,9 +140,11 @@ function Profile() {
         <Field label="Email">
           <input className={field} value={d.email} onChange={(e) => setD({ ...d, email: e.target.value })} />
         </Field>
-        <Field label="Parking and directions">
-          <input className={field} value={d.parking} onChange={(e) => setD({ ...d, parking: e.target.value })} />
-        </Field>
+        <div className="sm:col-span-2">
+          <Field label="Parking and directions">
+            <textarea rows={2} className={area} value={d.parking} onChange={(e) => setD({ ...d, parking: e.target.value })} />
+          </Field>
+        </div>
         <div className="sm:col-span-2">
           <Field label="Accepted payment methods" hint="One per line. The assistant only mentions what's listed.">
             <textarea rows={4} className={area} value={d.payment} onChange={(e) => setD({ ...d, payment: e.target.value })} />

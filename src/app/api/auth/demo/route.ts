@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   res.cookies.set(SESSION_COOKIE, encodeSession(DEMO_SESSION), {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: new URL(request.url).protocol === "https:" || request.headers.get("x-forwarded-proto") === "https",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });

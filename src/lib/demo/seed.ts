@@ -19,7 +19,7 @@ import type {
 import { DAY, formatSlotLabel, HOUR, MINUTE, parseHM, zonedParts, zonedTime } from "@/lib/time";
 import { DEMO_CLINIC_ID, demoClinic, demoFaqs, demoServices, demoStaff } from "./clinic";
 
-export const DEMO_DATA_VERSION = 3;
+export const DEMO_DATA_VERSION = 4;
 
 /** Small deterministic PRNG so the demo looks the same on every reset. */
 function mulberry32(seed: number) {
@@ -649,7 +649,8 @@ export function createDemoData(now: Date = new Date()): ClinicData {
       status: c.outcome,
       sentAt: iso(sentMs),
     };
-    lead.reactivatedFromCampaignId = c.outcome === "no_response" ? undefined : "cmp_q2_implants_aligners";
+    // "Reactivated" means re-engaged: the lead asked for times or booked. Opt-outs and "got it done elsewhere" are replies, not reactivations.
+    lead.reactivatedFromCampaignId = c.outcome === "booked" || c.outcome === "interested" ? "cmp_q2_implants_aligners" : undefined;
     followUps.push({
       id: `fu_${String(++fuSeq).padStart(3, "0")}`,
       clinicId: DEMO_CLINIC_ID,
