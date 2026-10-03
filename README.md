@@ -84,3 +84,10 @@ Production status
 This is a sales-ready MVP / demo, not a production healthcare system.
 
 Before using real patient data, production integrations, authentication, consent, security, privacy, compliance and clinical review still need to be implemented and validated.
+
+Demo
+
+See ConsultFlow in action:
+
+<video src="https://github.com/user-attachments/assets/5c54b211-f7e7-4922-9cf3-c265a10d89dc" controls></video>
+
